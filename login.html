@@ -185,6 +185,10 @@
         font-weight: bold;
         text-decoration: none;
     }
+
+    .site-logo { height: 68px; width: auto; display:inline-block; vertical-align:middle; margin-right:8px; }
+
+    @media (max-width:600px){ .site-logo { height:55px; } }
     
     .back-home {
         color: white;
@@ -310,7 +314,7 @@
 <body>
     <nav class="navbar">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Australian Embassy</a>
+            <a class="navbar-brand" href="index.html"><img src="images/logoembassy.jpeg" alt="Australian Embassy logo" class="site-logo"></a>
             <a class="back-home" href="index.html">
                 <i class="bi bi-arrow-left"></i> Back to Home
             </a>

@@ -211,6 +211,22 @@
       font-weight: bold;
       text-decoration: none;
       z-index: 1000;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* small, responsive site logo used in header */
+    .site-logo {
+      height: 36px; /* doubled from 36px */
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* Responsive: cap logo on small screens to original size */
+    @media (max-width: 600px) {
+      .site-logo { height: 72px; }
     }
     
     .navbar-nav {
@@ -1057,7 +1073,7 @@
         <header class="fbs__net-navbar" id="navbar">
             <div class="container">
                 <!-- Logo -->
-                <a class="navbar-brand" href="index.html">Australian Embassy</a>
+                <a class="navbar-brand" href="index.html"><img src="images/logoembassy.jpeg" alt="Australian Embassy logo" class="site-logo"></a>
                 
         <!-- Navigation -->
         <ul class="navbar-nav" id="navbarNav">
@@ -1083,7 +1099,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-6">
-              <h2 class="mb-4">Welcome to the Australian Embassy</h2>
+              <h2 class="mb-4">-</h2>
               <div>
                 <p>Welcome to the official portal of the Australian Embassy. Use this site to start visa and passport applications, book consular appointments, and find authoritative guidance for consular services.</p>
               </div>
