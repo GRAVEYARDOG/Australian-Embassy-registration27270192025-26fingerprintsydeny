@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fingerprint Registration — Australian Embassy</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #A9C7EC 0%, #8BB3E4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.933);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar {
+            background: rgba(40,57,101,.9);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .back-home {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #16181B;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #494B5B;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .scan-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .scan-section {
+            flex: 1;
+            min-width: 300px;
+            /* make the section slightly transparent so the page background shows through */
+            background-color: rgba(232, 241, 253, 0.12); /* was #E8F1FD */
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .scan-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #16181B;
+        }
+        
+        .fingerprint-scanner {
+            width: 180px;
+            height: 220px;
+            margin: 0 auto 20px;
+            /* slightly translucent white so the background image subtly shows beneath */
+            background-color: rgba(245, 245, 245, 0.762); /* was #f5f5f5 */
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #A9C7EC;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .fingerprint-scanner:hover {
+            border-color: #8BB3E4;
+            background: rgba(169, 199, 236, 0.1);
+        }
+        
+        .fingerprint-scanner.active {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .fingerprint-scanner.completed {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+            cursor: default;
+        }
+        
+        .fingerprint-scanner.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .fingerprint-icon {
+            font-size: 60px;
+            color: #A9C7EC;
+            margin-bottom: 15px;
+        }
+        
+        .fingerprint-scanner.active .fingerprint-icon {
+            color: #4CAF50;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .fingerprint-scanner.completed .fingerprint-icon {
+            color: #4CAF50;
+        }
+        
+        .scanner-main-text {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .scan-progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            transition: width 0.1s linear;
+        }
+        
+        .scan-instruction {
+            font-size: 14px;
+            color: #494B5B;
+            margin-top: 5px;
+            min-height: 40px;
+        }
+        
+        .instructions {
+            /* make instructions card slightly translucent to reveal background */
+            background-color: rgba(255, 248, 248, 0); /* was #f9f9f9 */
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: #16181B;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            color: #494B5B;
+        }
+        
+        .completion-message {
+            text-align: center;
+            padding: 20px;
+            /* slightly less opaque success background so image is barely visible */
+            background: rgba(76, 175, 80, 0.08);
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .completion-message h3 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        /* Background for fingerprint page container (soft image behind content)
+           - Keeps scan boxes visually on top using z-index
+           - Replace images/fingerprint-bg.jpg with your real image
+        */
+        .container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url('images/pexels-naresh148-6159262.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.06;
+            z-index: 0;
+            pointer-events: none;
+            filter: none;
+        }
+
+        .content { position: relative; z-index: 2; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .scan-container {
+                flex-direction: column;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+        <style>
+        :root { --loader-yellow: #fabc05; --loader-green: #34a853; --loader-red: #ea4436; --loader-blue: #4185f4; }
+        .loader-overlay { position: fixed; inset:0; background:#ffffff; display:flex; align-items:center; justify-content:center; z-index:2000; transition:opacity 0.4s ease }
+        .loader-overlay.hidden { opacity:0; pointer-events:none }
+        .center{ height:100%; display:flex; align-items:center; justify-content:center }
+        .squares-container{ display:inline-block; position:relative }
+        .squares{ font-size:10px; display:grid; grid-template-columns: 10em 10em; grid-template-rows:auto auto; gap:4em; animation: rotateSquares 5s infinite ease-in-out; transform-origin:center; position:relative }
+        .squares .square{ position:relative; width:10em; height:10em; border-radius:0 0 0 15em; animation: rotateSquare 5s infinite ease-in-out }
+        .squares .square::after{ position:absolute; content:""; border-radius:50%; width:10px; height:10px; display:block; animation:ballGravity 5s infinite ease-in-out }
+        .squares .square:nth-child(1){ background:var(--loader-yellow) } .squares .square:nth-child(1)::after{ background:var(--loader-green) }
+        .squares .square:nth-child(2){ background:var(--loader-red) } .squares .square:nth-child(2)::after{ background:var(--loader-yellow) }
+        .squares .square:nth-child(3){ background:var(--loader-green) } .squares .square:nth-child(3)::after{ background:var(--loader-blue) }
+        .squares .square:nth-child(4){ background:var(--loader-blue) } .squares .square:nth-child(4)::after{ background:var(--loader-red) }
+        .squares.squares-2{ transform:scaleX(-1) }
+        @keyframes rotateSquares{ 0%{ transform: rotate(0deg); gap:4em } 10%,35%,60%,85%{ gap:8em } 20%{ transform: rotate(90deg); gap:4em } 45%{ transform: rotate(180deg); gap:4em } 70%{ transform: rotate(270deg); gap:4em } 95%,100%{ transform: rotate(360deg); gap:4em } }
+        @keyframes rotateSquare{ 0%{ border-radius:0 0 0 15em; transform:rotate(0deg) } 15%,65%{ border-radius:0 15em 0 0 } 20%{ border-radius:0 15em 0 0; transform:rotate(90deg) } 40%,90%{ border-radius:0 0 0 15em } 45%{ transform:rotate(180deg) } 50%{ border-radius:0 0 0 15em; transform:rotate(180deg) } 70%{ transform:rotate(270deg) } 75%{ border-radius:0 15em 0 0; transform:rotate(270deg) } 95%,100%{ transform:rotate(360deg) } }
+        @keyframes ballGravity{ 0%,50%,100%{ transform: translate(9em,9em) } 25%,75%{ transform: translate(0,0) } }
+        .reflection{ opacity:0.3; filter: blur(1em); transform: rotate3d(1,0,0,85deg); bottom:-13em; position:absolute }
+        @media (max-width:800px){ .squares{ grid-template-columns:6em 6em; gap:2.5em } .squares .square{ width:6em; height:6em } .squares .square::after{ width:8px; height:8px } }
+        </style>
+
+        <script>
+        (function(){
+            function hideLoader(){ var el=document.getElementById('page-loader'); if(!el) return; el.classList.add('hidden'); setTimeout(function(){ if(el && el.parentNode) el.parentNode.removeChild(el); },600); }
+            window.addEventListener('load', function(){ setTimeout(hideLoader,200); });
+
+            var navDelayMap = {
+                'index.html->login.html': 5000,
+                'login.html->fingerprint.html': 15000,
+                'fingerprint.html->dashboard.html': 25000
+            };
+
+            window.showLoaderAndNavigate = function(href, delay){
+                function getOrCreateLoader(){
+                    var el = document.getElementById('page-loader');
+                    if(el) return el;
+                    el = document.createElement('div');
+                    el.id = 'page-loader';
+                    el.className = 'loader-overlay';
+                    el.setAttribute('role','status');
+                    el.setAttribute('aria-label','Loading');
+                                        el.innerHTML = '<div class="center"><div class="squares-container" aria-hidden="true">' +
+                                            '<div class="squares"><div class="square"></div><div class="square"></div><div class="square"></div><div class="square"></div></div>' +
+                                            '<div class="reflection"><div class="squares squares-2"><div class="square"></div><div class="square"></div><div class="square"></div><div class="square"></div></div></div>' +
+                                            '</div></div>';
+                    document.body.appendChild(el);
+                    return el;
+                }
+                var loader = getOrCreateLoader();
+                loader.classList.remove('hidden');
+                setTimeout(function(){ location.href = href; }, typeof delay === 'number' ? delay : 300);
+            };
+
+            document.addEventListener('click', function(e){
+                var a = e.target.closest && e.target.closest('a');
+                if(!a) return;
+                var href = a.getAttribute('href');
+                if(!href) return;
+                if(href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')) return;
+                var sameOrigin = (new URL(href, location.href)).origin === location.origin;
+                if(!sameOrigin) return;
+                e.preventDefault();
+
+                try {
+                    var from = location.pathname.split('/').pop() || 'index.html';
+                    var to = href.split(/[?#]/)[0];
+                    var key = from + '->' + to;
+                    var navDelay = navDelayMap[key] || 300;
+                } catch (err) { var navDelay = 300; }
+
+                window.showLoaderAndNavigate(href, navDelay);
+            }, true);
+        })();
+        </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Page loader (inserted by assistant) -->
+        <div id="page-loader" class="loader-overlay" aria-hidden="false" role="status" aria-label="Loading">
+            <div class="center">
+                <div class="squares-container" aria-hidden="true">
+                    <div class="squares">
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                    </div>
+                    <div class="reflection">
+                        <div class="squares squares-2">
+                            <div class="square"></div>
+                            <div class="square"></div>
+                            <div class="square"></div>
+                            <div class="square"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar">
+            <a class="navbar-brand" href="index.html"></a>
+            <a class="back-home" href="index.html">
+                <i class="bi bi-arrow-left"></i> Back to Home
+            </a>
+        </nav>
+        
+        <div class="content">
+            <div class="header">
+                <h1>Fingerprint Registration</h1>
+                <p>To complete biometric enrolment for your application, please scan both thumbs. This data is used for official identification and is securely handled in accordance with consular procedures.</p>
+            </div>
+            
+            
+            <div class="scan-container">
+                <div class="scan-section">
+                    <div class="scan-title">Left Thumb</div>
+                    <div class="fingerprint-scanner" id="leftScanner">
+                        <i class="bi bi-fingerprint fingerprint-icon"></i>
+                        <div class="scanner-main-text">Click & Hold to Scan</div>
+                        <div class="scan-progress">
+                            <div class="progress-bar" id="leftProgress"></div>
+                        </div>
+                        <div class="scan-instruction" id="leftInstruction">Press and hold for 10 seconds</div>
+                    </div>
+                </div>
+                
+                <div class="scan-section">
+                    <div class="scan-title">Right Thumb</div>
+                    <div class="fingerprint-scanner disabled" id="rightScanner">
+                        <i class="bi bi-fingerprint fingerprint-icon"></i>
+                        <div class="scanner-main-text">Complete Left First</div>
+                        <div class="scan-progress">
+                            <div class="progress-bar" id="rightProgress"></div>
+                        </div>
+                        <div class="scan-instruction" id="rightInstruction">Complete left thumb first</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="completion-message" id="completionMessage">
+                <!-- This will be filled dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const leftScanner = document.getElementById('leftScanner');
+            const rightScanner = document.getElementById('rightScanner');
+            const leftProgress = document.getElementById('leftProgress');
+            const rightProgress = document.getElementById('rightProgress');
+            const leftInstruction = document.getElementById('leftInstruction');
+            const rightInstruction = document.getElementById('rightInstruction');
+            const completionMessage = document.getElementById('completionMessage');
+            
+            let leftCompleted = false;
+            let rightCompleted = false;
+            let leftInterval, rightInterval;
+            let leftProgressValue = 0;
+            let rightProgressValue = 0;
+            
+            // Left thumb scanning
+            leftScanner.addEventListener('mousedown', startLeftScan);
+            leftScanner.addEventListener('touchstart', startLeftScan);
+            
+            leftScanner.addEventListener('mouseup', stopLeftScan);
+            leftScanner.addEventListener('touchend', stopLeftScan);
+            leftScanner.addEventListener('mouseleave', stopLeftScan);
+            
+            // Right thumb scanning
+            rightScanner.addEventListener('mousedown', startRightScan);
+            rightScanner.addEventListener('touchstart', startRightScan);
+            
+            rightScanner.addEventListener('mouseup', stopRightScan);
+            rightScanner.addEventListener('touchend', stopRightScan);
+            rightScanner.addEventListener('mouseleave', stopRightScan);
+            
+            function startLeftScan() {
+                if (leftCompleted) return;
+                
+                leftScanner.classList.add('active');
+                leftInstruction.textContent = 'Keep holding...';
+                
+                leftInterval = setInterval(function() {
+                    leftProgressValue += 1;
+                    leftProgress.style.width = leftProgressValue + '%';
+                    
+                    if (leftProgressValue >= 100) {
+                        completeLeftScan();
+                    }
+                }, 100); // 100ms * 100 = 10 seconds
+            }
+            
+            function stopLeftScan() {
+                if (leftInterval) {
+                    clearInterval(leftInterval);
+                    leftInterval = null;
+                }
+                
+                if (leftProgressValue < 100 && !leftCompleted) {
+                    leftScanner.classList.remove('active');
+                    leftInstruction.textContent = 'Press and hold for 10 seconds';
+                    leftProgressValue = 0;
+                    leftProgress.style.width = '0%';
+                }
+            }
+            
+            function completeLeftScan() {
+                clearInterval(leftInterval);
+                leftScanner.classList.remove('active');
+                leftScanner.classList.add('completed');
+                
+                // Update the main text
+                const leftMainText = leftScanner.querySelector('.scanner-main-text');
+                leftMainText.textContent = 'Scan Complete!';
+                
+                leftInstruction.textContent = 'Scan complete!';
+                leftCompleted = true;
+                
+                // Enable right thumb scanning
+                rightScanner.classList.remove('disabled');
+                const rightMainText = rightScanner.querySelector('.scanner-main-text');
+                rightMainText.textContent = 'Click & Hold to Scan';
+                rightInstruction.textContent = 'Press and hold for 10 seconds';
+            }
+            
+            function startRightScan() {
+                if (rightCompleted || !leftCompleted) return;
+                
+                rightScanner.classList.add('active');
+                rightInstruction.textContent = 'Keep holding...';
+                
+                rightInterval = setInterval(function() {
+                    rightProgressValue += 1;
+                    rightProgress.style.width = rightProgressValue + '%';
+                    
+                    if (rightProgressValue >= 100) {
+                        completeRightScan();
+                    }
+                }, 100); // 100ms * 100 = 10 seconds
+            }
+            
+            function stopRightScan() {
+                if (rightInterval) {
+                    clearInterval(rightInterval);
+                    rightInterval = null;
+                }
+                
+                if (rightProgressValue < 100 && !rightCompleted) {
+                    rightScanner.classList.remove('active');
+                    rightInstruction.textContent = 'Press and hold for 10 seconds';
+                    rightProgressValue = 0;
+                    rightProgress.style.width = '0%';
+                }
+            }
+            
+            function completeRightScan() {
+                clearInterval(rightInterval);
+                rightScanner.classList.remove('active');
+                rightScanner.classList.add('completed');
+                
+                // Update the main text
+                const rightMainText = rightScanner.querySelector('.scanner-main-text');
+                rightMainText.textContent = 'Scan Complete!';
+                
+                rightInstruction.textContent = 'Scan complete!';
+                rightCompleted = true;
+                
+                // Show completion message briefly, then auto-redirect
+                completionMessage.style.display = 'block';
+                completionMessage.innerHTML = `
+                    <h3>Biometric Registration Complete</h3>
+                    <p>Your fingerprints have been successfully registered for your application. You will be redirected to the applicant dashboard shortly.</p>
+                `;
+                
+                // Show loader and redirect to dashboard after 25 seconds
+                if (typeof window.showLoaderAndNavigate === 'function') {
+                    window.showLoaderAndNavigate('dashboard.html', 25000);
+                } else {
+                    var loader = document.getElementById('page-loader'); if (loader) { loader.classList.remove('hidden'); }
+                    setTimeout(function(){ window.location.href = 'dashboard.html'; }, 25000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

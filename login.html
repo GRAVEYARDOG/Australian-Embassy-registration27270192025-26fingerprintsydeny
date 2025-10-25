@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Nova Fintech</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+    body{
+        margin:0;
+        color:#6a6f8c;
+        background:#c8c8c8;
+        font:600 16px/18px 'Inter', sans-serif;
+    }
+    *,:after,:before{box-sizing:border-box}
+    .clearfix:after,.clearfix:before{content:'';display:table}
+    .clearfix:after{clear:both;display:block}
+    a{color:inherit;text-decoration:none}
+
+    .login-wrap{
+        width:100%;
+        margin:auto;
+        max-width:525px;
+        min-height:100vh;
+        position:relative;
+        background:url(https://raw.githubusercontent.com/supahfunk/supah-codepen/master/mountain.jpg) no-repeat center;
+        background-size: cover;
+        box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
+    }
+    .login-html{
+        width:100%;
+        height:100%;
+        position:absolute;
+        padding:90px 70px 50px 70px;
+        background:rgba(40,57,101,.9);
+    }
+    .login-html .sign-in-htm,
+    .login-html .sign-up-htm{
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        position:absolute;
+        transform:rotateY(180deg);
+        backface-visibility:hidden;
+        transition:all .4s linear;
+    }
+    .login-html .sign-in,
+    .login-html .sign-up,
+    .login-form .group .check{
+        display:none;
+    }
+    .login-html .tab,
+    .login-form .group .label,
+    .login-form .group .button{
+        text-transform:uppercase;
+    }
+    .login-html .tab{
+        font-size:22px;
+        margin-right:15px;
+        padding-bottom:5px;
+        margin:0 15px 10px 0;
+        display:inline-block;
+        border-bottom:2px solid transparent;
+    }
+    .login-html .sign-in:checked + .tab,
+    .login-html .sign-up:checked + .tab{
+        color:#fff;
+        border-color:#1161ee;
+    }
+    .login-form{
+        min-height:345px;
+        position:relative;
+        perspective:1000px;
+        transform-style:preserve-3d;
+    }
+    .login-form .group{
+        margin-bottom:15px;
+    }
+    .login-form .group .label,
+    .login-form .group .input,
+    .login-form .group .button{
+        width:100%;
+        color:#fff;
+        display:block;
+    }
+    .login-form .group .input,
+    .login-form .group .button{
+        border:none;
+        padding:15px 20px;
+        border-radius:25px;
+        background:rgba(255,255,255,.1);
+    }
+    .login-form .group input[data-type="password"]{
+        -webkit-text-security:circle;
+    }
+    .login-form .group .label{
+        color:#aaa;
+        font-size:12px;
+    }
+    .login-form .group .button{
+        background:#1161ee;
+        cursor: pointer;
+    }
+    .login-form .group .button:hover{
+        background:#0d52d0;
+    }
+    .login-form .group label .icon{
+        width:15px;
+        height:15px;
+        border-radius:2px;
+        position:relative;
+        display:inline-block;
+        background:rgba(255,255,255,.1);
+    }
+    .login-form .group label .icon:before,
+    .login-form .group label .icon:after{
+        content:'';
+        width:10px;
+        height:2px;
+        background:#fff;
+        position:absolute;
+        transition:all .2s ease-in-out 0s;
+    }
+    .login-form .group label .icon:before{
+        left:3px;
+        width:5px;
+        bottom:6px;
+        transform:scale(0) rotate(0);
+    }
+    .login-form .group label .icon:after{
+        top:6px;
+        right:0;
+        transform:scale(0) rotate(0);
+    }
+    .login-form .group .check:checked + label{
+        color:#fff;
+    }
+    .login-form .group .check:checked + label .icon{
+        background:#1161ee;
+    }
+    .login-form .group .check:checked + label .icon:before{
+        transform:scale(1) rotate(45deg);
+    }
+    .login-form .group .check:checked + label .icon:after{
+        transform:scale(1) rotate(-45deg);
+    }
+    .login-html .sign-in:checked + .tab + .sign-up + .tab + .login-form .sign-in-htm{
+        transform:rotate(0);
+    }
+    .login-html .sign-up:checked + .tab + .login-form .sign-up-htm{
+        transform:rotate(0);
+    }
+
+    .hr{
+        height:2px;
+        margin:60px 0 50px 0;
+        background:rgba(255,255,255,.2);
+    }
+    .foot-lnk{
+        text-align:center;
+    }
+    
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: rgba(40,57,101,.9);
+        padding: 15px 0;
+        z-index: 1000;
+    }
+    
+    .navbar .container {
+        max-width: 1140px;
+        margin: 0 auto;
+        padding: 0 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .navbar-brand {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    
+    .back-home {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .alert {
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        display: none;
+    }
+    
+    .alert-error {
+        background: rgba(220, 53, 69, 0.1);
+        color: #f8d7da;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+    
+    /* Login page background layering (soft image behind the login container) */
+    .login-wrap {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url('images/pexels-karola-g-4709428.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .login-html { position: relative; z-index: 2; }
+        /* loader styles */
+        :root { --loader-yellow: #fabc05; --loader-green: #34a853; --loader-red: #ea4436; --loader-blue: #4185f4; }
+        .loader-overlay { position: fixed; inset:0; background:#ffffff; display:flex; align-items:center; justify-content:center; z-index:2000; transition:opacity 0.4s ease }
+        .loader-overlay.hidden { opacity:0; pointer-events:none }
+        .center{ height:100%; display:flex; align-items:center; justify-content:center }
+        .squares-container{ display:inline-block; position:relative }
+        .squares{ font-size:10px; display:grid; grid-template-columns: 10em 10em; grid-template-rows:auto auto; gap:4em; animation: rotateSquares 5s infinite ease-in-out; transform-origin:center; position:relative }
+        .squares .square{ position:relative; width:10em; height:10em; border-radius:0 0 0 15em; animation: rotateSquare 5s infinite ease-in-out }
+        .squares .square::after{ position:absolute; content:""; border-radius:50%; width:10px; height:10px; display:block; animation:ballGravity 5s infinite ease-in-out }
+        .squares .square:nth-child(1){ background:var(--loader-yellow) } .squares .square:nth-child(1)::after{ background:var(--loader-green) }
+        .squares .square:nth-child(2){ background:var(--loader-red) } .squares .square:nth-child(2)::after{ background:var(--loader-yellow) }
+        .squares .square:nth-child(3){ background:var(--loader-green) } .squares .square:nth-child(3)::after{ background:var(--loader-blue) }
+        .squares .square:nth-child(4){ background:var(--loader-blue) } .squares .square:nth-child(4)::after{ background:var(--loader-red) }
+        .squares.squares-2{ transform:scaleX(-1) }
+        @keyframes rotateSquares{ 0%{ transform: rotate(0deg); gap:4em } 10%,35%,60%,85%{ gap:8em } 20%{ transform: rotate(90deg); gap:4em } 45%{ transform: rotate(180deg); gap:4em } 70%{ transform: rotate(270deg); gap:4em } 95%,100%{ transform: rotate(360deg); gap:4em } }
+        @keyframes rotateSquare{ 0%{ border-radius:0 0 0 15em; transform:rotate(0deg) } 15%,65%{ border-radius:0 15em 0 0 } 20%{ border-radius:0 15em 0 0; transform:rotate(90deg) } 40%,90%{ border-radius:0 0 0 15em } 45%{ transform:rotate(180deg) } 50%{ border-radius:0 0 0 15em; transform:rotate(180deg) } 70%{ transform:rotate(270deg) } 75%{ border-radius:0 15em 0 0; transform:rotate(270deg) } 95%,100%{ transform:rotate(360deg) } }
+        @keyframes ballGravity{ 0%,50%,100%{ transform: translate(9em,9em) } 25%,75%{ transform: translate(0,0) } }
+        .reflection{ opacity:0.3; filter: blur(1em); transform: rotate3d(1,0,0,85deg); bottom:-13em; position:absolute }
+        @media (max-width:800px){ .squares{ grid-template-columns:6em 6em; gap:2.5em } .squares .square{ width:6em; height:6em } .squares .square::after{ width:8px; height:8px } }
+
+        </style>
+
+        <script>
+        (function(){
+            function hideLoader(){ var el=document.getElementById('page-loader'); if(!el) return; el.classList.add('hidden'); setTimeout(function(){ if(el && el.parentNode) el.parentNode.removeChild(el); },600); }
+            // default initial hide after page load (short for login page)
+            window.addEventListener('load', function(){ setTimeout(hideLoader,200); });
+
+            // small map for per-transition delays (from -> to)
+            var navDelayMap = {
+                'index.html->login.html': 5000,
+                'login.html->fingerprint.html': 15000,
+                'fingerprint.html->dashboard.html': 25000
+            };
+
+            // helper to show loader immediately and navigate after delay (ms)
+            window.showLoaderAndNavigate = function(href, delay){
+                function getOrCreateLoader(){
+                    var el = document.getElementById('page-loader');
+                    if(el) return el;
+                    el = document.createElement('div');
+                    el.id = 'page-loader';
+                    el.className = 'loader-overlay';
+                    el.setAttribute('role','status');
+                    el.setAttribute('aria-label','Loading');
+                                        el.innerHTML = '<div class="center"><div class="squares-container" aria-hidden="true">' +
+                                            '<div class="squares"><div class="square"></div><div class="square"></div><div class="square"></div><div class="square"></div></div>' +
+                                            '<div class="reflection"><div class="squares squares-2"><div class="square"></div><div class="square"></div><div class="square"></div><div class="square"></div></div></div>' +
+                                            '</div></div>';
+                    document.body.appendChild(el);
+                    return el;
+                }
+                var loader = getOrCreateLoader();
+                loader.classList.remove('hidden');
+                setTimeout(function(){ location.href = href; }, typeof delay === 'number' ? delay : 300);
+            };
+
+            // delegated anchor click handler — consult navDelayMap
+            document.addEventListener('click', function(e){
+                var a = e.target.closest && e.target.closest('a');
+                if(!a) return;
+                var href = a.getAttribute('href');
+                if(!href) return;
+                if(href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')) return;
+                var sameOrigin = (new URL(href, location.href)).origin === location.origin;
+                if(!sameOrigin) return;
+                e.preventDefault();
+
+                // compute key like 'login.html->fingerprint.html'
+                try {
+                    var from = location.pathname.split('/').pop() || 'index.html';
+                    var to = href.split(/[?#]/)[0];
+                    var key = from + '->' + to;
+                    var navDelay = navDelayMap[key] || 300;
+                } catch (err) { var navDelay = 300; }
+
+                window.showLoaderAndNavigate(href, navDelay);
+            }, true);
+        })();
+        </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Australian Embassy</a>
+            <a class="back-home" href="index.html">
+                <i class="bi bi-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </nav>
+    
+    <div class="login-wrap">
+        <!-- Page loader (inserted by assistant) -->
+        <div id="page-loader" class="loader-overlay" aria-hidden="false" role="status" aria-label="Loading">
+            <div class="center">
+                <div class="squares-container" aria-hidden="true">
+                    <div class="squares">
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                    </div>
+                    <div class="reflection">
+                        <div class="squares squares-2">
+                            <div class="square"></div>
+                            <div class="square"></div>
+                            <div class="square"></div>
+                            <div class="square"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="login-html">
+            <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
+            <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab"></label>
+            <div class="login-form">
+                <div class="sign-in-htm">
+                    <div class="alert alert-error" id="errorMessage">
+                        Invalid credentials. Please try again.
+                    </div>
+                    <div class="group">
+                        <label for="user" class="label">Username</label>
+                        <input id="user" type="text" class="input">
+                    </div>
+                    <div class="group">
+                        <label for="pass" class="label">Passport ID</label>
+                        <input id="pass" type="password" class="input" data-type="password">
+                    </div>
+                    <div class="group">
+                        <input id="check" type="checkbox" class="check" checked>
+                        <label for="check"><span class="icon"></span> Keep me Signed in</label>
+                    </div>
+                    <div class="group">
+                        <input type="submit" class="button" value="Sign In" id="loginButton">
+                    </div>
+                    <div class="hr"></div>
+                    <div class="foot-lnk">
+                        <a href="index.html">Back to Homepage</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginButton').addEventListener('click', function() {
+    const username = document.getElementById('user').value;
+    const passportId = document.getElementById('pass').value;
+    const errorMessage = document.getElementById('errorMessage');
+    
+        // Check credentials
+    if (username === "NATAN MEKORO EROSE" && passportId === "EP6649412") {
+        // Successful login - redirect to fingerprint registration
+        // Use the shared helper (if available) so loader shows immediately and uses configured delay
+        if (typeof window.showLoaderAndNavigate === 'function') {
+            window.showLoaderAndNavigate('fingerprint.html', 15000);
+        } else {
+            var loader = document.getElementById('page-loader'); if (loader) { loader.classList.remove('hidden'); }
+            setTimeout(function(){ window.location.href = 'fingerprint.html'; }, 15000);
+        }
+    } else {
+        // Show error message
+        errorMessage.style.display = 'block';
+    }
+});
+    </script>
+</body>
+</html>
